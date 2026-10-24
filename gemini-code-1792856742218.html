@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Powderpuff Flag Football — Player Availability</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-page: #f4f6f5;
+      --bg-card: #ffffff;
+      --border-soft: #dce3e0;
+      --text-main: #1e2926;
+      --text-muted: #5c6b66;
+      --accent-sage: #3d6b58;
+      --accent-sage-light: #e6f0ec;
+      --accent-sage-border: #8ab3a1;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    .control-base {
+      height: 2.75rem; /* 44px accessible mobile touch target */
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    }
+
+    .control-base:focus {
+      outline: none;
+      border-color: var(--accent-sage);
+      box-shadow: 0 0 0 3px rgba(61, 107, 88, 0.15);
+    }
+
+    .slot-btn, .pos-btn {
+      transition: all 0.14s ease;
+      user-select: none;
+    }
+
+    .slot-active {
+      background-color: var(--accent-sage) !important;
+      color: #ffffff !important;
+      border-color: var(--accent-sage) !important;
+      font-weight: 600;
+    }
+
+    .pos-active {
+      background-color: var(--accent-sage-light) !important;
+      color: var(--accent-sage) !important;
+      border-color: var(--accent-sage) !important;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-14">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-[#dce3e0] px-4 py-4 sticky top-0 z-20">
+    <div class="max-w-3xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl" aria-hidden="true">🏈</span>
+        <h1 class="text-base sm:text-lg font-bold tracking-tight text-[#1e2926]">
+          Powderpuff Flag Football Availability
+        </h1>
+      </div>
+      <p class="text-xs text-[#5c6b66]">
+        Game Day: Tuesday, Nov 17 • School Dismissal: 2:10 PM
+      </p>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-3xl mx-auto px-4 mt-5">
+
+    <!-- ==================== FORM VIEW ==================== -->
+    <div id="formView" class="space-y-5">
+
+      <!-- Question 1: Player Profile -->
+      <section class="bg-white border border-[#dce3e0] rounded-2xl p-4 sm:p-6 shadow-sm">
+        <div class="flex flex-wrap items-baseline justify-between gap-2 mb-4">
+          <h2 class="text-base font-bold text-[#1e2926] flex items-center gap-2">
+            <span class="bg-[#e6f0ec] text-[#3d6b58] w-6 h-6 rounded-full inline-flex items-center justify-center text-xs font-bold shrink-0">1</span>
+            <span>Player Info &amp; Positions</span>
+          </h2>
+          <span class="text-xs text-[#5c6b66]">Submitting again updates your entry</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="playerName" class="block text-xs font-semibold text-[#33413d] mb-1.5">
+              Full Name <span class="text-rose-600">*</span>
+            </label>
+            <input id="playerName" type="text" autocomplete="name" placeholder="e.g., Sarah Miller"
+              class="control-base w-full bg-[#f9fbfa] border border-[#cbd5d1] rounded-xl px-3.5 text-sm text-[#1e2926] placeholder-[#8fa19b]" />
+          </div>
+
+          <div>
+            <label for="playerNote" class="block text-xs font-semibold text-[#33413d] mb-1.5">
+              After-School Activity / Commitment Note
+            </label>
+            <input id="playerNote" type="text" placeholder="e.g., Varsity Soccer, Club, Part-time job"
+              class="control-base w-full bg-[#f9fbfa] border border-[#cbd5d1] rounded-xl px-3.5 text-sm text-[#1e2926] placeholder-[#8fa19b]" />
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-xs font-semibold text-[#33413d] mb-2">
+            Position Group Interest (Tap all that apply)
+          </label>
+          <div id="positionPills" class="flex flex-wrap gap-2">
+            <button type="button" onclick="togglePos(this, 'QB')" class="pos-btn min-h-[38px] px-3.5 py-1.5 rounded-xl border border-[#cbd5d1] bg-[#f9fbfa] text-xs text-[#33413d] hover:border-[#8ab3a1]">
+              QB
+            </button>
+            <button type="button" onclick="togglePos(this, 'WR/RB')" class="pos-btn min-h-[38px] px-3.5 py-1.5 rounded-xl border border-[#cbd5d1] bg-[#f9fbfa] text-xs text-[#33413d] hover:border-[#8ab3a1]">
+              WR / RB
+            </button>
+            <button type="button" onclick="togglePos(this, 'Rusher/Blitzer')" class="pos-btn min-h-[38px] px-3.5 py-1.5 rounded-xl border border-[#cbd5d1] bg-[#f9fbfa] text-xs text-[#33413d] hover:border-[#8ab3a1]">
+              Rusher / Blitzer
+            </button>
+            <button type="button" onclick="togglePos(this, 'DB/Safety')" class="pos-btn min-h-[38px] px-3.5 py-1.5 rounded-xl border border-[#cbd5d1] bg-[#f9fbfa] text-xs text-[#33413d] hover:border-[#8ab3a1]">
+              DB / Safety
+            </button>
+            <button type="button" onclick="togglePos(this, 'Any')" class="pos-btn min-h-[38px] px-3.5 py-1.5 rounded-xl border border-[#cbd5d1] bg-[#f9fbfa] text-xs text-[#33413d] hover:border-[#8ab3a1]">
+              Anywhere Coach Needs Me
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Question 2: Typical Weekly Practice Hours -->
+      <section class="bg-white border border-[#dce3e0] rounded-2xl p-4 sm:p-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-base font-bold text-[#1e2926] flex items-center gap-2">
+              <span class="bg-[#e6f0ec] text-[#3d6b58] w-6 h-6 rounded-full inline-flex items-center justify-center text-xs font-bold shrink-0">2</span>
+              <span>Typical Weekly Practice Hours (Mon – Sun)</span>
+            </h2>
+            <p class="text-xs text-[#5c6b66] mt-1">
+              Tap every practice hour interval (5:30–6:30, 6:30–7:30, 7:30–8:30) you are normally available during a typical week.
+            </p>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <button type="button" onclick="applyPreset('allAfterSchool')"
+              class="min-h-[38px] text-xs bg-[#e6f0ec] hover:bg-[#d5e6df] text-[#2c5242] border border-[#b5d1c5] px-3 py-1.5 rounded-xl font-semibold transition">
+              Free all day after school
+            </button>
+            <button type="button" onclick="applyPreset('clear')"
+              class="min-h-[38px] text-xs bg-[#f9fbfa] hover:bg-[#f0f4f2] text-[#5c6b66] border border-[#cbd5d1] px-3 py-1.5 rounded-xl font-medium transition">
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Responsive Weekly Grid -->
+        <div id="weeklyGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+      </section>
+
+      <!-- Question 3: Specific Date Exceptions -->
+      <section class="bg-white border border-[#dce3e0] rounded-2xl p-4 sm:p-6 shadow-sm">
+        <div class="mb-4">
+          <h2 class="text-base font-bold text-[#1e2926] flex items-center gap-2">
+            <span class="bg-[#e6f0ec] text-[#3d6b58] w-6 h-6 rounded-full inline-flex items-center justify-center text-xs font-bold shrink-0">3</span>
+            <span>Specific Date Exceptions (Oct 24 – Nov 17)</span>
+          </h2>
+          <p class="text-xs text-[#5c6b66] mt-1">
+            Need time off from your usual weekly schedule on a specific date (e.g., an appointment, game, or family conflict)? Select the date and practice interval below to mark yourself unavailable.
+          </p>
+        </div>
+
+        <!-- Aligned Controls -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#f4f6f5] p-3.5 rounded-xl border border-[#dce3e0]">
+          <div>
+            <label for="overrideDate" class="block text-xs font-semibold text-[#33413d] mb-1.5">
+              Date (Oct 24 – Nov 17)
+            </label>
+            <select id="overrideDate"
+              class="control-base w-full bg-white border border-[#cbd5d1] rounded-xl px-3 text-xs sm:text-sm text-[#1e2926]">
+            </select>
+          </div>
+
+          <div>
+            <label for="overrideSlot" class="block text-xs font-semibold text-[#33413d] mb-1.5">
+              Practice Time Window
+            </label>
+            <select id="overrideSlot"
+              class="control-base w-full bg-white border border-[#cbd5d1] rounded-xl px-3 text-xs sm:text-sm text-[#1e2926]">
+              <option value="ALL">All Practice Hours (5:30–8:30)</option>
+              <option value="5:30–6:30">5:30–6:30</option>
+              <option value="6:30–7:30">6:30–7:30</option>
+              <option value="7:30–8:30">7:30–8:30</option>
+            </select>
+          </div>
+
+          <div class="flex items-end">
+            <button id="addExceptionBtn" type="button" onclick="addOverride()"
+              class="control-base w-full bg-[#3d6b58] hover:bg-[#325949] text-white font-semibold text-xs sm:text-sm px-4 rounded-xl transition">
+              + Add exception
+            </button>
+          </div>
+        </div>
+
+        <!-- Added Exception Pills -->
+        <div id="overrideList" class="flex flex-wrap gap-2 mt-3" aria-live="polite"></div>
+      </section>
+
+      <!-- Submit Footer -->
+      <section class="bg-white border border-[#dce3e0] rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div id="submitStatus" class="text-xs text-[#5c6b66] text-center sm:text-left">
+          Ready to save your practice availability.
+        </div>
+        <button id="submitBtn" type="button" onclick="submitPlayerForm()"
+          class="control-base w-full sm:w-auto bg-[#3d6b58] hover:bg-[#325949] text-white font-bold text-sm px-7 rounded-xl shadow-sm transition">
+          Submit Availability
+        </button>
+      </section>
+
+    </div>
+
+    <!-- ==================== CONFIRMATION VIEW ==================== -->
+    <section id="confirmationView" class="hidden bg-white border border-[#dce3e0] rounded-2xl p-5 sm:p-7 shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e5ece9] pb-5">
+        <div class="flex items-start gap-3.5">
+          <div class="w-10 h-10 rounded-full bg-[#e6f0ec] text-[#3d6b58] flex items-center justify-center text-lg font-bold shrink-0">
+            ✓
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-[#1e2926]">Availability Submitted!</h2>
+            <p id="confirmSyncSubtitle" class="text-xs text-[#5c6b66] mt-0.5">
+              Your schedule has been recorded for Coach.
+            </p>
+          </div>
+        </div>
+
+        <button type="button" onclick="returnToEditForm()"
+          class="control-base px-4 rounded-xl border border-[#cbd5d1] bg-[#f9fbfa] hover:bg-[#edf2f0] text-xs font-semibold text-[#1e2926] transition shrink-0">
+          ✎ Edit My Availability
+        </button>
+      </div>
+
+      <!-- Player Summary Meta -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#f9fbfa] border border-[#dce3e0] rounded-xl p-4">
+        <div>
+          <span class="block text-[11px] font-semibold uppercase tracking-wider text-[#5c6b66]">Player Name</span>
+          <p id="confirmName" class="text-sm font-bold text-[#1e2926] mt-0.5">—</p>
+        </div>
+        <div>
+          <span class="block text-[11px] font-semibold uppercase tracking-wider text-[#5c6b66]">Position Interests</span>
+          <p id="confirmPositions" class="text-sm font-semibold text-[#3d6b58] mt-0.5">—</p>
+        </div>
+        <div>
+          <span class="block text-[11px] font-semibold uppercase tracking-wider text-[#5c6b66]">Activity / Commitment Note</span>
+          <p id="confirmNote" class="text-sm text-[#33413d] mt-0.5">—</p>
+        </div>
+      </div>
+
+      <!-- Weekly Practice Hours Summary -->
+      <div>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-[#5c6b66] mb-2.5">
+          Typical Weekly Practice Hours
+        </h3>
+        <div id="confirmWeeklyGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
+      </div>
+
+      <!-- Date Exceptions Summary -->
+      <div>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-[#5c6b66] mb-2">
+          Specific Date Exceptions (Time Off)
+        </h3>
+        <div id="confirmOverridesList" class="flex flex-wrap gap-2"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW
+    // =========================================================================
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbys3MtmcqFedOZKr5DCCyLX_YHnmbvHlNWa-pzuNjxYMYJ9qzQvo_npHmv_qeRyaCAl5w/exec';
+
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const PRACTICE_SLOTS = ['5:30–6:30', '6:30–7:30', '7:30–8:30'];
+
+    let selectedPositions = new Set();
+    let weeklyBaseline = {};
+    let dateOverrides = [];
+
+    DAYS.forEach(day => {
+      weeklyBaseline[day] = [];
+    });
+
+    function populateDateDropdown() {
+      const select = document.getElementById('overrideDate');
+      select.innerHTML = '';
+      const cur = new Date('2026-10-24T12:00:00');
+      const end = new Date('2026-11-17T12:00:00');
+
+      while (cur <= end) {
+        const yyyy = cur.getFullYear();
+        const mm = String(cur.getMonth() + 1).padStart(2, '0');
+        const dd = String(cur.getDate()).padStart(2, '0');
+        const iso = `${yyyy}-${mm}-${dd}`;
+        const readable = cur.toLocaleDateString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric'
+        });
+
+        const opt = document.createElement('option');
+        opt.value = iso;
+        opt.textContent = `${readable} (${iso})`;
+        if (iso === '2026-11-03') opt.selected = true;
+        select.appendChild(opt);
+
+        cur.setDate(cur.getDate() + 1);
+      }
+    }
+
+    function renderWeeklyGrid() {
+      const container = document.getElementById('weeklyGrid');
+      container.innerHTML = '';
+
+      DAYS.forEach(day => {
+        const selectedForDay = weeklyBaseline[day] || [];
+        const allSelected = selectedForDay.length === PRACTICE_SLOTS.length;
+
+        const card = document.createElement('div');
+        card.className = 'bg-[#f9fbfa] border border-[#dce3e0] rounded-xl p-3 flex flex-col gap-2';
+
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between border-b border-[#e5ece9] pb-1.5 mb-0.5';
+        header.innerHTML = `
+          <span class="text-xs font-bold text-[#1e2926]">${day}</span>
+          <button type="button" onclick="toggleEntireDay('${day}')"
+            class="text-[11px] font-semibold text-[#3d6b58] hover:underline px-1 py-0.5">
+            ${allSelected ? 'Clear day' : 'Select all'}
+          </button>
+        `;
+        card.appendChild(header);
+
+        PRACTICE_SLOTS.forEach(slot => {
+          const isSelected = selectedForDay.includes(slot);
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+          btn.className = `slot-btn min-h-[40px] w-full flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-medium ${
+            isSelected
+              ? 'slot-active'
+              : 'bg-white border-[#cbd5d1] text-[#33413d] hover:border-[#8ab3a1]'
+          }`;
+          btn.innerHTML = `
+            <span>${slot}</span>
+            <span class="text-[11px] ${isSelected ? 'opacity-100' : 'opacity-0'}">✓</span>
+          `;
+          btn.onclick = () => toggleWeeklySlot(day, slot);
+          card.appendChild(btn);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function toggleWeeklySlot(day, slot) {
+      const arr = weeklyBaseline[day] || [];
+      const idx = arr.indexOf(slot);
+      if (idx > -1) {
+        arr.splice(idx, 1);
+      } else {
+        arr.push(slot);
+      }
+      // Keep slots ordered chronologically
+      weeklyBaseline[day] = PRACTICE_SLOTS.filter(s => arr.includes(s));
+      renderWeeklyGrid();
+    }
+
+    function toggleEntireDay(day) {
+      if ((weeklyBaseline[day] || []).length === PRACTICE_SLOTS.length) {
+        weeklyBaseline[day] = [];
+      } else {
+        weeklyBaseline[day] = [...PRACTICE_SLOTS];
+      }
+      renderWeeklyGrid();
+    }
+
+    function applyPreset(preset) {
+      DAYS.forEach(day => {
+        if (preset === 'clear') {
+          weeklyBaseline[day] = [];
+        } else if (preset === 'allAfterSchool') {
+          weeklyBaseline[day] = [...PRACTICE_SLOTS];
+        }
+      });
+      renderWeeklyGrid();
+    }
+
+    function togglePos(btn, pos) {
+      if (selectedPositions.has(pos)) {
+        selectedPositions.delete(pos);
+        btn.classList.remove('pos-active');
+      } else {
+        selectedPositions.add(pos);
+        btn.classList.add('pos-active');
+      }
+    }
+
+    function addOverride() {
+      const dateSelect = document.getElementById('overrideDate');
+      const slotSelect = document.getElementById('overrideSlot');
+      const dateVal = dateSelect.value;
+      const slotVal = slotSelect.value;
+      if (!dateVal) return;
+
+      const dateObj = new Date(dateVal + 'T12:00:00');
+      const readableDate = dateObj.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+      });
+
+      const exists = dateOverrides.some(ov => ov.date === dateVal && ov.slot === slotVal);
+      if (!exists) {
+        dateOverrides.push({
+          date: dateVal,
+          label: readableDate,
+          type: 'unavailable',
+          slot: slotVal
+        });
+      }
+
+      renderOverrides();
+    }
+
+    function removeOverride(idx) {
+      dateOverrides.splice(idx, 1);
+      renderOverrides();
+    }
+
+    function updateExceptionButtonLabel() {
+      const btn = document.getElementById('addExceptionBtn');
+      btn.textContent = dateOverrides.length > 0 ? '+ Add another exception' : '+ Add exception';
+    }
+
+    function renderOverrides() {
+      const wrap = document.getElementById('overrideList');
+      wrap.innerHTML = '';
+
+      dateOverrides.forEach((ov, i) => {
+        const slotText = ov.slot === 'ALL' ? 'All Practice Hours (5:30–8:30)' : ov.slot;
+        const badge = document.createElement('div');
+        badge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium bg-[#f4f6f5] border border-[#cbd5d1] text-[#1e2926]';
+        badge.innerHTML = `
+          <span>Unavailable <strong>${ov.label}</strong> • ${slotText}</span>
+          <button type="button" onclick="removeOverride(${i})"
+            aria-label="Remove exception for ${ov.label}"
+            class="w-5 h-5 inline-flex items-center justify-center rounded-full text-[#5c6b66] hover:bg-[#dce3e0] hover:text-[#1e2926] font-bold">
+            ✕
+          </button>
+        `;
+        wrap.appendChild(badge);
+      });
+
+      updateExceptionButtonLabel();
+    }
+
+    function showConfirmationScreen(payload, syncSubtitle) {
+      document.getElementById('confirmName').textContent = payload.name;
+      document.getElementById('confirmPositions').textContent =
+        payload.positions.length > 0 ? payload.positions.join(', ') : 'No preference selected';
+      document.getElementById('confirmNote').textContent =
+        payload.note ? payload.note : 'None listed';
+      document.getElementById('confirmSyncSubtitle').textContent = syncSubtitle;
+
+      // Render Weekly Summary
+      const weeklyContainer = document.getElementById('confirmWeeklyGrid');
+      weeklyContainer.innerHTML = '';
+      DAYS.forEach(day => {
+        const slots = payload.weekly[day] || [];
+        const card = document.createElement('div');
+        card.className = 'bg-[#f9fbfa] border border-[#dce3e0] rounded-xl px-3.5 py-2.5 flex flex-col justify-between';
+        card.innerHTML = `
+          <span class="text-xs font-bold text-[#1e2926]">${day}</span>
+          <span class="text-xs mt-1 ${slots.length > 0 ? 'text-[#2c5242] font-semibold' : 'text-[#8fa19b]'}">
+            ${slots.length > 0 ? slots.join(', ') : 'Not available'}
+          </span>
+        `;
+        weeklyContainer.appendChild(card);
+      });
+
+      // Render Exceptions Summary
+      const ovContainer = document.getElementById('confirmOverridesList');
+      ovContainer.innerHTML = '';
+      if (!payload.overrides || payload.overrides.length === 0) {
+        ovContainer.innerHTML = '<span class="text-xs text-[#5c6b66]">No specific date exceptions added.</span>';
+      } else {
+        payload.overrides.forEach(ov => {
+          const slotText = ov.slot === 'ALL' ? 'All Practice Hours (5:30–8:30)' : ov.slot;
+          const pill = document.createElement('div');
+          pill.className = 'px-3 py-1.5 rounded-xl text-xs font-medium bg-[#f4f6f5] border border-[#cbd5d1] text-[#1e2926]';
+          pill.innerHTML = `Unavailable <strong>${ov.label || ov.date}</strong> • ${slotText}`;
+          ovContainer.appendChild(pill);
+        });
+      }
+
+      document.getElementById('formView').classList.add('hidden');
+      document.getElementById('confirmationView').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function returnToEditForm() {
+      document.getElementById('confirmationView').classList.add('hidden');
+      document.getElementById('formView').classList.remove('hidden');
+      document.getElementById('submitStatus').textContent = 'Make any changes below and click Submit Availability to update.';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function submitPlayerForm() {
+      const nameInput = document.getElementById('playerName');
+      const name = nameInput.value.trim();
+      const note = document.getElementById('playerNote').value.trim();
+      const statusEl = document.getElementById('submitStatus');
+      const btn = document.getElementById('submitBtn');
+
+      if (!name) {
+        statusEl.innerHTML = '<span class="text-rose-700 font-semibold">Please enter your Full Name before submitting.</span>';
+        nameInput.focus();
+        return;
+      }
+
+      const payload = {
+        timestamp: new Date().toISOString(),
+        name: name,
+        positions: Array.from(selectedPositions),
+        note: note,
+        weekly: JSON.parse(JSON.stringify(weeklyBaseline)),
+        overrides: [...dateOverrides]
+      };
+
+      // Save locally as backup
+      const existingRoster = JSON.parse(localStorage.getItem('ppf_roster_2026') || '[]');
+      const existingIdx = existingRoster.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+      if (existingIdx > -1) existingRoster[existingIdx] = payload;
+      else existingRoster.push(payload);
+      localStorage.setItem('ppf_roster_2026', JSON.stringify(existingRoster));
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      let syncMessage = `Saved for ${name}.`;
+
+      if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')) {
+        try {
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+          syncMessage = `Synced to Coach's Google Sheet for ${name}.`;
+        } catch (err) {
+          syncMessage = `Saved on device (Sheet sync error: ${err.message}).`;
+        }
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Submit Availability';
+      showConfirmationScreen(payload, syncMessage);
+    }
+
+    // Initialize UI
+    populateDateDropdown();
+    renderWeeklyGrid();
+    updateExceptionButtonLabel();
+  </script>
+</body>
+</html>
